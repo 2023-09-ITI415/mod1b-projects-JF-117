@@ -16,6 +16,8 @@ public class PlayerController : MonoBehaviour
 
     float timer = 0;
     bool timerReached = true;
+    float starttimer = 0;
+    bool starttimerReached = false;
 
     void Start ()
     {
@@ -27,19 +29,31 @@ public class PlayerController : MonoBehaviour
 
     void Update ()
     {
-        //out of bounds
+        //game over conditions
+        if(!timerReached)
+        timer += Time.deltaTime;
+
         if (rb.transform.position.y < -10f){
         timerReached = false;
         winText.text = "Game Over! Restarting...";
-        timer += Time.deltaTime;
+        //timer += Time.deltaTime;
         }
 
         if (!timerReached && timer > 3){
         SceneManager.LoadScene("Main-Prototype 1");
-        timerReached = true;
+        //timerReached = true;
         }
 
-        
+        if (!starttimerReached)
+        starttimer += Time.deltaTime;
+
+        if (!starttimerReached && starttimer < 5){
+        winText.text = "Don't Touch The Red! Press Space to Jump!";
+        }
+        else if (!starttimerReached && starttimer > 5){
+        starttimerReached = true;
+        winText.text = "";
+        }
     }
 
     void FixedUpdate ()
@@ -51,7 +65,7 @@ public class PlayerController : MonoBehaviour
 
         rb.AddForce (movement * speed);
         //jumping
-        if (Input.GetKeyDown ("space") && rb.transform.position.y <= 0.5f) {
+        if (Input.GetKeyDown ("space") && rb.transform.position.y <= 1f) {
             Vector3 jump = new Vector3 (0.0f, jumpHeight, 0.0f);
  
         rb.AddForce (jump);
@@ -66,15 +80,24 @@ public class PlayerController : MonoBehaviour
             count = count + 1;
             SetCountText();
         }
+
+        if(other.gameObject.CompareTag("KillWall"))
+        {
+            timerReached = false;
+            winText.text = "Game Over! Restarting...";
+        }
     
+        if(other.gameObject.CompareTag("Goal"))
+        {
+             if (count >= 8)
+        {
+            winText.text = "You Win!";
+        }
+        }
     }
 
     void SetCountText()
     {
         countText.text = "Count: " + count.ToString ();
-        if (count >= 12)
-        {
-            winText.text = "You Win!";
-        }
     }
 }

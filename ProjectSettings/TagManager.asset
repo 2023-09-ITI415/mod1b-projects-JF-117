@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Apple
   - Projectile
+  - Pickup
+  - KillWall
+  - Goal
   layers:
   - Default
   - TransparentFX
